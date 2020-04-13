@@ -155,7 +155,7 @@ if __name__ == '__main__':
         except Exception as e:
             print(e)
 
-    schedule.every(10).minutes.do(scraper)
+    schedule.every(1).minutes.do(scraper)
     # schedule.every().hour.do(job)
     # schedule.every(5).to(10).minutes.do(job)
     # schedule.every().monday.do(job)
