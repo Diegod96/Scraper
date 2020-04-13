@@ -1,4 +1,3 @@
-import base64
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -6,14 +5,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 import pandas as pd
 from os import path
-from apikey import *
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import (Mail, Attachment, FileContent, FileName, FileType, Disposition, ContentId)
-import schedule
-import time
-from datetime import datetime
-import pytz
-
 from url import *
 
 
@@ -129,39 +120,4 @@ if __name__ == '__main__':
     dictionary_of_listings = scraper.organizeResults(results)
     scraper.to_csv(dictionary_of_listings)
 
-    with open('url.txt', 'rb') as f:
-        data = f.read()
-        f.close()
 
-        encoded = base64.b64encode(data).decode()
-        message = Mail(
-            from_email=FROM_EMAIL,
-            to_emails=TO_EMAIL,
-            subject='Your File is Ready',
-            html_content='<strong>Attached is Your Scraped File</strong>')
-        attachment = Attachment()
-        attachment.file_content = FileContent(encoded)
-        attachment.file_type = FileType('text/csv')
-        attachment.file_name = FileName('data.csv')
-        attachment.disposition = Disposition('attachment')
-        attachment.content_id = ContentId('Example Content ID')
-        message.attachment = attachment
-        try:
-            sg = SendGridAPIClient(SENDGRID_API_KEY)
-            response = sg.send(message)
-            print(response.status_code)
-            print(response.body)
-            print(response.headers)
-        except Exception as e:
-            print(e)
-
-    schedule.every(1).minutes.do(scraper)
-    # schedule.every().hour.do(job)
-    # schedule.every(5).to(10).minutes.do(job)
-    # schedule.every().monday.do(job)
-    # schedule.every().wednesday.at("13:15").do(job)
-    # schedule.every().minute.at(":17").do(job)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(1)  # wait one minute
