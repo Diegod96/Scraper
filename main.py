@@ -1,4 +1,5 @@
-
+from datetime import datetime
+from apscheduler.schedulers.blocking import BlockingScheduler
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -101,16 +102,12 @@ class Job:
         df.to_csv('data.csv', index=False)
 
 
-if __name__ == '__main__':
 
-    # This should be called only once!!!
-    # Then the 'url' should be used every time main.py is built and ran, and not be constructed again by calling 'UrlObj().url'
-
+def main():
     if not path.exists('url.txt'):
         url = UrlObj().url
         text_file = open('url.txt', 'w')
         text_file.write(url)
-
 
     x = open('url.txt', 'r')
     y = x.read()
@@ -119,5 +116,20 @@ if __name__ == '__main__':
     scraper.kill()
     dictionary_of_listings = scraper.organizeResults(results)
     scraper.to_csv(dictionary_of_listings)
+
+
+if __name__ == '__main__':
+
+    main()
+
+    scheduler = BlockingScheduler()
+    scheduler.add_job(main, 'interval', hours=1)
+    scheduler.start()
+
+
+
+
+
+
 
 
